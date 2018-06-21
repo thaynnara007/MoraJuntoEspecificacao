@@ -1,10 +1,11 @@
 /*
 			More Junto
 
-	( ) Como usário, desejo me cadastrar no sistema
-	( ) Como usuário cadastrado, desejo efetuar login no sistema
-	( ) Como usuário cadastrado, após efeturar login, gostaria de visualizar meu perfil
-	( ) Como usuário logado, gostaria de ver os anúncios
+	(x) Como usário, desejo me cadastrar no sistema
+	(x) Como usuário cadastrado, desejo efetuar login no sistema
+	(x) Como usuário cadastrado, após efeturar login, gostaria de visualizar meu perfil
+	(x) Como usuário logado, gostaria de ver os anúncios
+	( ) Como usuario logado, gostaria de criar meu proprio anuncio
 
 */
 
@@ -24,7 +25,9 @@ sig UsuarioCadastrado extends Usuario{
 
 sig UsuarioLogado extends Usuario{
 	
-	perfil : one Perfil
+	perfil : one Perfil,
+	abaAnuncio : one Anuncios,
+	criarAnuncio : one CadastrarAnuncio
 }
 
 one sig Cadastro{}
@@ -60,11 +63,26 @@ sig Consultar{}
 
 sig Filtro{} 
 
-sig CadastrarAnuncios{}
+sig CadastrarAnuncio{}
 
 sig NotificadoPorEmail{}
 
-sig Deslogar{}
+sig Deslogar{} 
+
+fact mult{
+	
+	//Apenas usuarios nao cadastrados podem fazer cadastro
+	all c : Cadastro | some c.~cadastrar
+
+	//Apenas usuarios cadastrados podem efeturar login
+	all l : Login | some l.~logar
+	
+	//Toda pagina de perfil esta ligada à um usuario
+	all p : Perfil | one p.~perfil 
+
+	//Cada usuario tem sua aba anuncios
+	all a : Anuncios | one a.~abaAnuncio
+}
 
 pred show[]{}
 run show for 8
