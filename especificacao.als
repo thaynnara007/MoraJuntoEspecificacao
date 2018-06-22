@@ -6,7 +6,7 @@
 	(x) Como usuário cadastrado, após efeturar login, gostaria de visualizar meu perfil
 	(x) Como usuário logado, gostaria de ver os anúncios
 	(x) Como usuario logado, gostaria de criar meu proprio anuncio
-	( ) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
+	(x) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
 
 */
 module moreJunto
