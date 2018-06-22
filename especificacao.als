@@ -6,6 +6,7 @@
 	(x) Como usuário cadastrado, após efeturar login, gostaria de visualizar meu perfil
 	(x) Como usuário logado, gostaria de ver os anúncios
 	( ) Como usuario logado, gostaria de criar meu proprio anuncio
+	( ) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
 
 */
 
@@ -27,7 +28,8 @@ sig UsuarioLogado extends Usuario{
 	
 	perfil : one Perfil,
 	abaAnuncio : one Anuncios,
-	criarAnuncio : one CadastrarAnuncio
+	criarAnuncio : one CadastrarAnuncio,
+	meusAnuncios : one MeusAnuncios
 }
 
 one sig Cadastro{}
@@ -47,9 +49,16 @@ sig AnuncioApartamento extends Anuncio{}
 
 sig AnuncioRepublica extends Anuncio{}
 
-sig AnuncioCriadoPeloUusario extends Anuncio{}
+sig AnuncioCriadoPeloUsuario extends Anuncio{}
 
 sig AnuncioMoradoPeloUsuario extends Anuncio{}
+
+sig CadastrarAnuncio{}
+
+sig MeusAnuncios{
+
+	anuncios : set AnuncioCriadoPeloUsuario
+}
 
 sig Localizacao{}
 
@@ -62,8 +71,6 @@ sig Avaliar{}
 sig Consultar{}
 
 sig Filtro{} 
-
-sig CadastrarAnuncio{}
 
 sig NotificadoPorEmail{}
 
@@ -82,8 +89,14 @@ fact mult{
 
 	//Cada usuario tem sua aba anuncios
 	all a : Anuncios | one a.~abaAnuncio
+
+	//Cada usuario tem sua aba de cadastrar anuncios
+	all c_a : CadastrarAnuncio| one c_a.~criarAnuncio
+
+	//Cada usuario tem acesso ao seus anuncios
+	all m : MeusAnuncios | one m.~meusAnuncios
 }
 
 pred show[]{}
-run show for 8
+run show for 5
 
