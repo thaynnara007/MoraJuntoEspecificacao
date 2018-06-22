@@ -9,9 +9,10 @@
 	( ) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
 
 */
-
 module moreJunto
-
+------------------------------------------------
+-------------ASSINATURAS----------------
+------------------------------------------------
 abstract sig Usuario{}
 
 sig UsuarioNaoCadastrado{
@@ -76,6 +77,9 @@ sig NotificadoPorEmail{}
 
 sig Deslogar{} 
 
+----------------------------------------------
+------------------FATOS-------------------
+----------------------------------------------
 fact mult{
 	
 	//Apenas usuarios nao cadastrados podem fazer cadastro
@@ -95,6 +99,35 @@ fact mult{
 
 	//Cada usuario tem acesso ao seus anuncios
 	all m : MeusAnuncios | one m.~meusAnuncios
+}
+
+fact anuncioCriadoEstaContidoEmTodosOsAnuncios{
+
+	// Todos os anuncios criados por um usuario esta em sua aba de Meus anuncios
+	// e junto como todos os anuncios na aba Anuncios
+	all u : UsuarioLogado, a : AnuncioCriadoPeloUsuario | anunciosContemAnuncioCriado[u,a]
+}
+
+--------------------------------------------
+------------PREDICADOS--------------
+--------------------------------------------
+
+pred anunciosContemAnuncioCriado[user : UsuarioLogado, anuncio : AnuncioCriadoPeloUsuario]{
+
+	 (anuncio in anunciosDoUsuario[user]) and (anuncio in todosOsAnuncios[user])
+}
+
+--------------------------------------------
+----------------FUNCOES---------------
+-------------------------------------------
+fun anunciosDoUsuario[user : UsuarioLogado] : set AnuncioCriadoPeloUsuario{
+
+	user.meusAnuncios.anuncios
+}
+
+fun todosOsAnuncios[user :  UsuarioLogado] : set Anuncio{
+
+	user.abaAnuncio.anuncio
 }
 
 pred show[]{}
