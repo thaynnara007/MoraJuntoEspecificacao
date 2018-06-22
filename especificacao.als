@@ -5,7 +5,7 @@
 	(x) Como usuário cadastrado, desejo efetuar login no sistema
 	(x) Como usuário cadastrado, após efeturar login, gostaria de visualizar meu perfil
 	(x) Como usuário logado, gostaria de ver os anúncios
-	( ) Como usuario logado, gostaria de criar meu proprio anuncio
+	(x) Como usuario logado, gostaria de criar meu proprio anuncio
 	( ) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
 
 */
@@ -99,23 +99,25 @@ fact mult{
 
 	//Cada usuario tem acesso ao seus anuncios
 	all m : MeusAnuncios | one m.~meusAnuncios
+
+	//Cada anuncio criado por um usuario deve pertencer apenas a uma aba Meus Anuncios
+	all a_c : AnuncioCriadoPeloUsuario | one a_c.~anuncios
 }
 
 fact anuncioCriadoEstaContidoEmTodosOsAnuncios{
-
-	// Todos os anuncios criados por um usuario esta em sua aba de Meus anuncios
-	// e junto como todos os anuncios na aba Anuncios
-	all u : UsuarioLogado, a : AnuncioCriadoPeloUsuario | anunciosContemAnuncioCriado[u,a]
+	
+	//Para todo anuncio criado pelo usuario existe uma aba anuncio onde esse anuncio esta contido
+	some b : Anuncios | all a : AnuncioCriadoPeloUsuario | anunciosContemAnuncioCriado[a,b]
 }
 
 --------------------------------------------
 ------------PREDICADOS--------------
 --------------------------------------------
 
-pred anunciosContemAnuncioCriado[user : UsuarioLogado, anuncio : AnuncioCriadoPeloUsuario]{
+pred anunciosContemAnuncioCriado[anuncio : AnuncioCriadoPeloUsuario, abaAnuncio : Anuncios]{
 
-	 (anuncio in anunciosDoUsuario[user]) and (anuncio in todosOsAnuncios[user])
-}
+	 (anuncio in todosOsAnuncios[abaAnuncio])
+} 
 
 --------------------------------------------
 ----------------FUNCOES---------------
@@ -125,11 +127,11 @@ fun anunciosDoUsuario[user : UsuarioLogado] : set AnuncioCriadoPeloUsuario{
 	user.meusAnuncios.anuncios
 }
 
-fun todosOsAnuncios[user :  UsuarioLogado] : set Anuncio{
+fun todosOsAnuncios[abaAnuncio : Anuncios] : set Anuncio{
 
-	user.abaAnuncio.anuncio
+	abaAnuncio.anuncio
 }
 
 pred show[]{}
-run show for 5
+run show for 8
 
