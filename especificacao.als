@@ -7,9 +7,9 @@
 	(x) Como usuário logado, gostaria de ver os anúncios
 	(x) Como usuario logado, gostaria de criar meu proprio anuncio
 	(x) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
-	( ) Como usuario logado, gostaria de poder apagar meu perfil
-	( ) Como usuario logado, gostaria de poder mudar minha senha
-	( ) Como usuario logado, gostaria de deslogar do sistemas
+	(x) Como usuario logado, gostaria de poder apagar meu perfil
+	(x) Como usuario logado, gostaria de poder mudar minha senha
+	(x) Como usuario logado, gostaria de deslogar do sistemas
 
 */
 module moreJunto
@@ -156,11 +156,6 @@ pred anunciosContemAnuncioCriado[anuncio : AnuncioCriadoPeloUsuario, abaAnuncio 
 --------------------------------------------
 ----------------FUNCOES---------------
 -------------------------------------------
-fun anunciosDoUsuario[user : UsuarioLogado] : set AnuncioCriadoPeloUsuario{
-
-	user.meusAnuncios.anuncios
-}
-
 fun todosOsAnuncios[abaAnuncio : Anuncios] : set Anuncio{
 
 	abaAnuncio.anuncio
