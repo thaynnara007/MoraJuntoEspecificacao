@@ -7,6 +7,8 @@
 	(x) Como usuário logado, gostaria de ver os anúncios
 	(x) Como usuario logado, gostaria de criar meu proprio anuncio
 	(x) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
+	( ) Como usuario logado, gostaria de poder apagar meu perfil
+	( ) Como usuario Logado, gostaria de poder mudar minha senha
 
 */
 module moreJunto
@@ -22,15 +24,16 @@ sig UsuarioNaoCadastrado{
 
 sig UsuarioCadastrado extends Usuario{
 
-	logar : one Login
+	logar : lone Login
 }
 
-sig UsuarioLogado extends Usuario{
+sig UsuarioLogado in UsuarioCadastrado{
 	
 	perfil : one Perfil,
 	abaAnuncio : one Anuncios,
 	criarAnuncio : one CadastrarAnuncio,
-	meusAnuncios : one MeusAnuncios
+	meusAnuncios : one MeusAnuncios,
+
 }
 
 one sig Cadastro{}
@@ -102,6 +105,9 @@ fact mult{
 
 	//Cada anuncio criado por um usuario deve pertencer apenas a uma aba Meus Anuncios
 	all a_c : AnuncioCriadoPeloUsuario | one a_c.~anuncios
+
+	//Todo anuncio deve estar ligado a uma aba anuncios
+	all a : Anuncio | some a.~anuncio
 }
 
 fact anuncioCriadoEstaContidoEmTodosOsAnuncios{
@@ -110,6 +116,10 @@ fact anuncioCriadoEstaContidoEmTodosOsAnuncios{
 	some b : Anuncios | all a : AnuncioCriadoPeloUsuario | anunciosContemAnuncioCriado[a,b]
 }
 
+fact usuarioLogadoNaoPodeLogarDeNovo{
+	
+	all u: UsuarioLogado | #u.logar = 0 
+}
 --------------------------------------------
 ------------PREDICADOS--------------
 --------------------------------------------
@@ -133,5 +143,5 @@ fun todosOsAnuncios[abaAnuncio : Anuncios] : set Anuncio{
 }
 
 pred show[]{}
-run show for 8
+run show for 5
 
