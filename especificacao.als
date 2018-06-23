@@ -9,6 +9,7 @@
 	(x) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
 	( ) Como usuario logado, gostaria de poder apagar meu perfil
 	( ) Como usuario Logado, gostaria de poder mudar minha senha
+	( ) Como usuari ologado, gostaria de deslogar do sistemas
 
 */
 module moreJunto
@@ -33,8 +34,21 @@ sig UsuarioLogado in UsuarioCadastrado{
 	abaAnuncio : one Anuncios,
 	criarAnuncio : one CadastrarAnuncio,
 	meusAnuncios : one MeusAnuncios,
-
+	configuracao : one Configuracoes
 }
+
+sig Configuracoes{
+	
+	excluirConta : one ApagarPerfil,
+	trocarSenha : one MudarSenha,
+	deslogar : one Deslogar
+}
+
+sig ApagarPerfil{}
+
+sig MudarSenha{}
+
+sig Deslogar{}
 
 one sig Cadastro{}
 
@@ -77,8 +91,6 @@ sig Consultar{}
 sig Filtro{} 
 
 sig NotificadoPorEmail{}
-
-sig Deslogar{} 
 
 ----------------------------------------------
 ------------------FATOS-------------------
