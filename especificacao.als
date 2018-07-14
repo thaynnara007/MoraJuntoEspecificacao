@@ -10,6 +10,7 @@
 	(x) Como usuario logado, gostaria de poder apagar meu perfil
 	(x) Como usuario logado, gostaria de poder mudar minha senha
 	(x) Como usuario logado, gostaria de deslogar do sistemas
+	(x) Como usuario logado, gostari de poder filtrar anuncios na pagina de anuncios
 
 */
 module moreJunto
@@ -60,16 +61,17 @@ sig Perfil{}
 
 sig Anuncios{
 	
-	anuncio : set Anuncio
+	anuncio : set Anuncio,
+	filtro : one Filtro
 }
 
 abstract sig Anuncio{}
 
+sig AnuncioCriadoPeloUsuario extends Anuncio{}
+
 sig AnuncioApartamento extends Anuncio{}
 
 sig AnuncioRepublica extends Anuncio{}
-
-sig AnuncioCriadoPeloUsuario extends Anuncio{}
 
 sig AnuncioMoradoPeloUsuario extends Anuncio{}
 
@@ -90,7 +92,10 @@ sig Avaliar{}
 
 sig Consultar{}
 
-sig Filtro{} 
+sig Filtro{
+	
+	anunciosFiltrados : set Anuncio
+} 
 
 sig NotificadoPorEmail{}
 
@@ -135,6 +140,9 @@ fact mult{
 
 	--Toda opcao de deslogar esta ligada a uma aba configuracao respectivo a seu usuario
 	all d : Deslogar | one d.~deslogar
+
+	--cada filtro esta ligado a uma aba anuncios 
+	all f: Filtro | one f.~filtro
 }
 
 fact {
@@ -154,7 +162,7 @@ fact {
 
 fact{
 	
-	--Todo anuncio craido por um usuario pertence a alguma aba anuncios tal que esta aba não seja a do usuario que criou o anuncio
+	--Todo anuncio craido por um usuario pertence a alguma aba anuncios que não seja a do proprio usuario
 	all u: UsuarioLogado , m: MeusAnuncios, aba: Anuncios | abaAnunciosEmeusAnunciosSaoConjuntosDiferentes[aba,m,u]
 }
 
@@ -208,5 +216,5 @@ fun anunciosDoUsuario[meusAnuncios : MeusAnuncios] : set Anuncio{
 }
 
 pred show[]{}
-run show for 5
+run show for 4
 
