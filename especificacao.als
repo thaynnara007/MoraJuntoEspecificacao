@@ -13,6 +13,7 @@
 	(x) Como usuario logado, gostaria de poder filtrar anuncios na pagina de anuncios.
 	(x) Como usuario cadastrado, gostaria que ao cadastrar um novo anuncio, eu fosse notificado por email.
 	(x) Como usuario, gostaria que os anuncios tivessem a localizacao do imóvel.
+	(x) Como usuario logado, gostaria de poder favoritar anuncios.
 
 */
 module moreJunto
@@ -69,12 +70,13 @@ sig Anuncios{
 
 abstract sig Anuncio{
 
-	localizacao : one Localizacao 
+	localizacao : one Localizacao,
+	favorito : one Favoritar 
 }
 
 sig AnuncioCriadoPeloUsuario extends Anuncio{
 
-	notificaPorEmail : one NotificadoPorEmail
+	notificaPorEmail : one NotificadoPorEmail	
 }
 
 sig AnuncioApartamento extends Anuncio{}
@@ -119,11 +121,11 @@ fact mult{
 	--Apenas usuarios cadastrados podem efeturar login
 	all l : Login | some l.~logar
 	
-	--Tpda pagina perfil pertence a um usuario
-	all p: Perfil | one  p.~perfil
+	--Toda pagina perfil pertence a um usuario
+	all p : Perfil | one  p.~perfil
 
 	--Toda aba anuncios pertence a um usuario
-	all a: Anuncios | one a.~abaAnuncio
+	all a : Anuncios | one a.~abaAnuncio
 	
 	--Toda  aba de cadastrar anuncios pertence a um usuario cadastrado
 	all c_a : CadastrarAnuncio| one c_a.~cadastrarAnuncio
@@ -150,27 +152,30 @@ fact mult{
 	all d : Deslogar | one d.~deslogar
 
 	--cada filtro pertence a uma aba anuncios 
-	all f: Filtro | one f.~filtro
+	all f : Filtro | one f.~filtro
 	
 	--Todo anuncio cadastrado notifica por email o usuario 
-	all n: NotificadoPorEmail | one n.~notificaPorEmail
+	all n : NotificadoPorEmail | one n.~notificaPorEmail
 
 	--Toda localizacao esta associada a um anuncio
-	all l: Localizacao | one l.~localizacao
+	all l : Localizacao | one l.~localizacao
+
+	--Cada opcao de favoritar esta associdado a um anuncio
+	all f : Favoritar | one f.~favorito
 }
 
 fact {
 
-	--Todo usuario cadastrado tem sua propria pagina de perfil diferente das demais
+	--Nao existe nenhum usuario com o mesmo perfil
 	all u1, u2 : UsuarioCadastrado | u1 != u2 implies u1.perfil != u2.perfil
 
-	--Todo usuario cadastrado tem sua propria aba de anuncios diferente das demais
+	--Nao existe nenhum usuario com a mesma aba anuncio
 	all u1, u2 : UsuarioCadastrado | u1 != u2 implies u1.abaAnuncio != u2.abaAnuncio
 
-	--Todo usuario cadastrado tem sua propria aba de criar anuncios diferente das demais
+	--Nao existe nenhum usuario com a mesma aba cadastrar anuncio
 	all u1,u2 : UsuarioCadastrado | u1 != u2 implies u1.cadastrarAnuncio != u2.cadastrarAnuncio
 	
-	--Todo usuario cadastrado tem sua propria aba de meus anuncios diferente das demais
+	--Nao existe nenhum anuncio com a mesma aba meus anuncios
 	all u1,u2 : UsuarioCadastrado | u1 != u2 implies u1.meusAnuncios != u2.meusAnuncios
 
 	--Nao existe nenhum anuncio com a mesma localizacao 
@@ -180,12 +185,12 @@ fact {
 fact{
 	
 	--Todo anuncio craido por um usuario pertence a alguma aba anuncios que não seja a do proprio usuario
-	all u: UsuarioLogado , m: MeusAnuncios, aba: Anuncios | abaAnunciosEmeusAnunciosSaoConjuntosDiferentes[aba,m,u]
+	all u : UsuarioLogado , m : MeusAnuncios, aba: Anuncios | abaAnunciosEmeusAnunciosSaoConjuntosDiferentes[aba,m,u]
 }
 
 fact usuarioLogadoNaoPodeLogarDeNovo{
 	
-	all u: UsuarioLogado | #u.logar = 0 
+	all u : UsuarioLogado | #u.logar = 0 
 }
 
 --------------------------------------------
@@ -233,5 +238,5 @@ fun anunciosDoUsuario[meusAnuncios : MeusAnuncios] : set Anuncio{
 }
 
 pred show[]{}
-run show for 4
+run show for 5
 
