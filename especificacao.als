@@ -14,6 +14,7 @@
 	(x) Como usuario cadastrado, gostaria que ao cadastrar um novo anuncio, eu fosse notificado por email.
 	(x) Como usuario, gostaria que os anuncios tivessem a localizacao do imóvel.
 	(x) Como usuario logado, gostaria de poder favoritar anuncios.
+	(x) Como usuario, gostaria de poder avaliar anuncios cujo o imóvel eu ja fui morador.
 
 */
 module moreJunto
@@ -83,7 +84,10 @@ sig AnuncioApartamento extends Anuncio{}
 
 sig AnuncioRepublica extends Anuncio{}
 
-sig AnuncioMoradoPeloUsuario extends Anuncio{}
+sig AnuncioMoradoPeloUsuario extends Anuncio{
+
+	avaliar : one Avaliar
+}
 
 sig CadastrarAnuncio{}
 
@@ -100,7 +104,7 @@ sig Favoritar{}
 
 sig Avaliar{}
 
-sig Consultar{}
+sig ConsultarInformacoes{}
 
 sig Filtro{
 	
@@ -162,6 +166,9 @@ fact mult{
 
 	--Cada opcao de favoritar esta associdado a um anuncio
 	all f : Favoritar | one f.~favorito
+
+	--Cada opcao de avaliar anuncio esta associada a um anuncio que ja foi morado pelo usuario 
+	all a : Avaliar | one a.~avaliar
 }
 
 fact {
