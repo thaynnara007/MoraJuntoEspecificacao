@@ -32,7 +32,7 @@ sig UsuarioLogado in UsuarioCadastrado{
 	
 	perfil : one Perfil,
 	abaAnuncio : one Anuncios,
-	criarAnuncio : one CadastrarAnuncio,
+	cadastrarAnuncio : one CadastrarAnuncio,
 	meusAnuncios : one MeusAnuncios,
 	configuracao : one Configuracoes
 }
@@ -97,22 +97,22 @@ sig NotificadoPorEmail{}
 ----------------------------------------------
 fact mult{
 	
-	--Apenas usuarios nao cadastrados podem fazer cadastro
+	--Apenas usuarios nao cadastrados podem efetuar cadastro
 	all c : Cadastro | some c.~cadastrar
 
 	--Apenas usuarios cadastrados podem efeturar login
 	all l : Login | some l.~logar
 	
-	--Toda pagina de perfil esta ligada à um usuario
-	all p : Perfil | one p.~perfil 
+	--Tpda pagina perfil pertence a um usuario
+	all p: Perfil | one  p.~perfil
 
-	--Cada usuario tem sua aba anuncios
-	all a : Anuncios | one a.~abaAnuncio
+	--Toda aba anuncios pertence a um usuario
+	all a: Anuncios | one a.~abaAnuncio
+	
+	--Toda  aba de cadastrar anuncios pertence a um usuario cadastrado
+	all c_a : CadastrarAnuncio| one c_a.~cadastrarAnuncio
 
-	--Cada usuario tem sua aba de cadastrar anuncios
-	all c_a : CadastrarAnuncio| one c_a.~criarAnuncio
-
-	--Cada usuario tem acesso ao seus anuncios
+	--Todo usuario tem acesso ao seus anuncios
 	all m : MeusAnuncios | one m.~meusAnuncios
 
 	--Cada anuncio criado por um usuario deve pertencer apenas a uma aba Meus Anuncios
@@ -121,7 +121,7 @@ fact mult{
 	--Todo anuncio deve estar ligado a uma aba anuncios
 	all a : Anuncio | some a.~anuncio
 
-	--Toda pagina de configuracao de conta epode ser acessado por apenas um usuario logado dono da cont
+	--Toda pagina de configuracao de conta epode ser acessado por apenas um usuario logado dono da conta
 	all c : Configuracoes | one c.~configuracao
 	
 	--Toda opcao de apagar perfil esta ligada a uma aba configuracoes respectivo a seu usuario
@@ -134,10 +134,25 @@ fact mult{
 	all d : Deslogar | one d.~deslogar
 }
 
-fact anuncioCriadoEstaContidoEmTodosOsAnuncios{
+fact {
+
+	--Todo usuario cadastrado tem sua propria pagina de perfil diferente das demais
+	all u1, u2 : UsuarioCadastrado | u1 != u2 implies u1.perfil != u2.perfil
+
+	--Todo usuario cadastrado tem sua propria aba de anuncios diferente das demais
+	all u1, u2 : UsuarioCadastrado | u1 != u2 implies u1.abaAnuncio != u2.abaAnuncio
+
+	--Todo usuario cadastrado tem sua propria aba de criar anuncios diferente das demais
+	all u1,u2 : UsuarioCadastrado | u1 != u2 implies u1.cadastrarAnuncio != u2.cadastrarAnuncio
 	
-	--Para todo anuncio criado pelo usuario existe uma aba anuncio onde esse anuncio esta contido
-	some b : Anuncios | all a : AnuncioCriadoPeloUsuario | anunciosContemAnuncioCriado[a,b]
+	--Todo usuario cadastrado tem sua propria aba de meus anuncios diferente das demais
+	all u1,u2 : UsuarioCadastrado | u1 != u2 implies u1.meusAnuncios != u2.meusAnuncios
+}
+
+fact{
+	
+	--Todo anuncio craido por um usuario pertence a alguma aba anuncios tal que esta aba não seja a do usuario que criou o anuncio
+	all u: UsuarioLogado , m: MeusAnuncios, aba: Anuncios | (abaMeusAnuncios[u] = m) and (abaAnuncioDoUsuario[u] = aba) implies aba.anuncio = aba.anuncio - m.anuncios
 }
 
 fact usuarioLogadoNaoPodeLogarDeNovo{
@@ -159,6 +174,16 @@ pred anunciosContemAnuncioCriado[anuncio : AnuncioCriadoPeloUsuario, abaAnuncio 
 fun todosOsAnuncios[abaAnuncio : Anuncios] : set Anuncio{
 
 	abaAnuncio.anuncio
+}
+
+fun abaMeusAnuncios[usuario : UsuarioLogado] : one MeusAnuncios{
+
+	usuario.meusAnuncios 
+}
+
+fun abaAnuncioDoUsuario[usuario: UsuarioLogado] : one Anuncios{
+
+	usuario.abaAnuncio
 }
 
 pred show[]{}
