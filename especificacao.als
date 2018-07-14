@@ -12,6 +12,7 @@
 	(x) Como usuario logado, gostaria de deslogar do sistemas.
 	(x) Como usuario logado, gostaria de poder filtrar anuncios na pagina de anuncios.
 	(x) Como usuario cadastrado, gostaria que ao cadastrar um novo anuncio, eu fosse notificado por email.
+	(x) Como usuario, gostaria que os anuncios tivessem a localizacao do imóvel.
 
 */
 module moreJunto
@@ -66,7 +67,10 @@ sig Anuncios{
 	filtro : one Filtro
 }
 
-abstract sig Anuncio{}
+abstract sig Anuncio{
+
+	localizacao : one Localizacao 
+}
 
 sig AnuncioCriadoPeloUsuario extends Anuncio{
 
@@ -150,6 +154,9 @@ fact mult{
 	
 	--Todo anuncio cadastrado notifica por email o usuario 
 	all n: NotificadoPorEmail | one n.~notificaPorEmail
+
+	--Toda localizacao esta associada a um anuncio
+	all l: Localizacao | one l.~localizacao
 }
 
 fact {
@@ -165,6 +172,9 @@ fact {
 	
 	--Todo usuario cadastrado tem sua propria aba de meus anuncios diferente das demais
 	all u1,u2 : UsuarioCadastrado | u1 != u2 implies u1.meusAnuncios != u2.meusAnuncios
+
+	--Nao existe nenhum anuncio com a mesma localizacao 
+	all a1, a2 : Anuncio | a1 != a2 implies a1.localizacao != a2.localizacao 
 }
 
 fact{
