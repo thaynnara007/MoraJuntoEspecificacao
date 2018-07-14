@@ -15,6 +15,7 @@
 	(x) Como usuario, gostaria que os anuncios tivessem a localizacao do imóvel.
 	(x) Como usuario logado, gostaria de poder favoritar anuncios.
 	(x) Como usuario, gostaria de poder avaliar anuncios cujo o imóvel eu ja fui morador.
+	(x) Como usuario, gostaria que cada anuncio tivesse um preco.
 
 */
 module moreJunto
@@ -72,7 +73,8 @@ sig Anuncios{
 abstract sig Anuncio{
 
 	localizacao : one Localizacao,
-	favorito : one Favoritar 
+	favorito : one Favoritar, 
+	preco : one Preco
 }
 
 sig AnuncioCriadoPeloUsuario extends Anuncio{
@@ -169,6 +171,9 @@ fact mult{
 
 	--Cada opcao de avaliar anuncio esta associada a um anuncio que ja foi morado pelo usuario 
 	all a : Avaliar | one a.~avaliar
+
+	--Cada preco esta associada a um anuncio 
+	all p : Preco | one p.~preco
 }
 
 fact {
