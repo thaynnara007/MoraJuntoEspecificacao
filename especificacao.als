@@ -1,16 +1,17 @@
 /*
 			More Junto
 
-	(x) Como usário, desejo me cadastrar no sistema
-	(x) Como usuário cadastrado, desejo efetuar login no sistema
-	(x) Como usuário cadastrado, após efeturar login, gostaria de visualizar meu perfil
-	(x) Como usuário logado, gostaria de ver os anúncios
-	(x) Como usuario logado, gostaria de criar meu proprio anuncio
-	(x) Como usuario logado, gostaria de ver meus anuncio em uma aba separada
-	(x) Como usuario logado, gostaria de poder apagar meu perfil
-	(x) Como usuario logado, gostaria de poder mudar minha senha
-	(x) Como usuario logado, gostaria de deslogar do sistemas
-	(x) Como usuario logado, gostari de poder filtrar anuncios na pagina de anuncios
+	(x) Como usário, desejo me cadastrar no sistema.
+	(x) Como usuário cadastrado, desejo efetuar login no sistema.
+	(x) Como usuário cadastrado, após efeturar login, gostaria de visualizar meu perfil.
+	(x) Como usuário logado, gostaria de ver os anúncios.
+	(x) Como usuario logado, gostaria de criar meu proprio anuncio.
+	(x) Como usuario logado, gostaria de ver meus anuncio em uma aba separada.
+	(x) Como usuario logado, gostaria de poder apagar meu perfil.
+	(x) Como usuario logado, gostaria de poder mudar minha senha.
+	(x) Como usuario logado, gostaria de deslogar do sistemas.
+	(x) Como usuario logado, gostaria de poder filtrar anuncios na pagina de anuncios.
+	(x) Como usuario cadastrado, gostaria que ao cadastrar um novo anuncio, eu fosse notificado por email.
 
 */
 module moreJunto
@@ -67,7 +68,10 @@ sig Anuncios{
 
 abstract sig Anuncio{}
 
-sig AnuncioCriadoPeloUsuario extends Anuncio{}
+sig AnuncioCriadoPeloUsuario extends Anuncio{
+
+	notificaPorEmail : one NotificadoPorEmail
+}
 
 sig AnuncioApartamento extends Anuncio{}
 
@@ -141,8 +145,11 @@ fact mult{
 	--Toda opcao de deslogar esta ligada a uma aba configuracao respectivo a seu usuario
 	all d : Deslogar | one d.~deslogar
 
-	--cada filtro esta ligado a uma aba anuncios 
+	--cada filtro pertence a uma aba anuncios 
 	all f: Filtro | one f.~filtro
+	
+	--Todo anuncio cadastrado notifica por email o usuario 
+	all n: NotificadoPorEmail | one n.~notificaPorEmail
 }
 
 fact {
