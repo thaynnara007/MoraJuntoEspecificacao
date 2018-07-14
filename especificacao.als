@@ -13,9 +13,11 @@
 
 */
 module moreJunto
+
 ------------------------------------------------
 -------------ASSINATURAS----------------
 ------------------------------------------------
+
 abstract sig Usuario{}
 
 sig UsuarioNaoCadastrado{
@@ -95,6 +97,7 @@ sig NotificadoPorEmail{}
 ----------------------------------------------
 ------------------FATOS-------------------
 ----------------------------------------------
+
 fact mult{
 	
 	--Apenas usuarios nao cadastrados podem efetuar cadastro
@@ -152,25 +155,38 @@ fact {
 fact{
 	
 	--Todo anuncio craido por um usuario pertence a alguma aba anuncios tal que esta aba não seja a do usuario que criou o anuncio
-	all u: UsuarioLogado , m: MeusAnuncios, aba: Anuncios | (abaMeusAnuncios[u] = m) and (abaAnuncioDoUsuario[u] = aba) implies aba.anuncio = aba.anuncio - m.anuncios
+	all u: UsuarioLogado , m: MeusAnuncios, aba: Anuncios | abaAnunciosEmeusAnunciosSaoConjuntosDiferentes[aba,m,u]
 }
 
 fact usuarioLogadoNaoPodeLogarDeNovo{
 	
 	all u: UsuarioLogado | #u.logar = 0 
 }
+
 --------------------------------------------
 ------------PREDICADOS--------------
 --------------------------------------------
 
-pred anunciosContemAnuncioCriado[anuncio : AnuncioCriadoPeloUsuario, abaAnuncio : Anuncios]{
+pred abaMeusAnunciosAbaAnuncioDoMesmoUsario[abaAnuncio: Anuncios, meusAnuncios : MeusAnuncios, usuario: UsuarioLogado] {
 
-	 (anuncio in todosOsAnuncios[abaAnuncio])
-} 
+	 (abaMeusAnuncios[usuario] = meusAnuncios) and (abaAnuncioDoUsuario[usuario] = abaAnuncio)
+}
+
+pred anunciosDaAbaAnuncio[abaAnuncio : Anuncios, meusAnuncios : MeusAnuncios]{
+
+	todosOsAnuncios[abaAnuncio] = todosOsAnuncios[abaAnuncio] - anunciosDoUsuario[meusAnuncios]
+}
+
+pred  abaAnunciosEmeusAnunciosSaoConjuntosDiferentes[abaAnuncio : Anuncios, meusAnuncios : MeusAnuncios, usuario : UsuarioLogado]{
+
+	 abaMeusAnunciosAbaAnuncioDoMesmoUsario[abaAnuncio,meusAnuncios,usuario] implies anunciosDaAbaAnuncio[abaAnuncio,meusAnuncios]
+
+}
 
 --------------------------------------------
 ----------------FUNCOES---------------
 -------------------------------------------
+
 fun todosOsAnuncios[abaAnuncio : Anuncios] : set Anuncio{
 
 	abaAnuncio.anuncio
@@ -184,6 +200,11 @@ fun abaMeusAnuncios[usuario : UsuarioLogado] : one MeusAnuncios{
 fun abaAnuncioDoUsuario[usuario: UsuarioLogado] : one Anuncios{
 
 	usuario.abaAnuncio
+}
+
+fun anunciosDoUsuario[meusAnuncios : MeusAnuncios] : set Anuncio{
+
+	meusAnuncios.anuncios
 }
 
 pred show[]{}
