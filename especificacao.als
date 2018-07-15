@@ -14,8 +14,9 @@
 	(x) Como usuario cadastrado, gostaria que ao cadastrar um novo anuncio, eu fosse notificado por email.
 	(x) Como usuario, gostaria que os anuncios tivessem a localizacao do imóvel.
 	(x) Como usuario logado, gostaria de poder favoritar anuncios.
-	(x) Como usuario, gostaria de poder avaliar anuncios cujo o imóvel eu ja fui morador.
+	(x) Como usuario logado, gostaria de poder avaliar anuncios cujo o imóvel eu ja fui morador.
 	(x) Como usuario, gostaria que cada anuncio tivesse um preco.
+	() Como usuario logado, gostaria de poder consultar informações dos anuncios
 
 */
 module moreJunto
@@ -72,9 +73,7 @@ sig Anuncios{
 
 abstract sig Anuncio{
 
-	localizacao : one Localizacao,
-	favorito : one Favoritar, 
-	preco : one Preco
+	consulta : one ConsultarInformacoes
 }
 
 sig AnuncioCriadoPeloUsuario extends Anuncio{
@@ -86,10 +85,7 @@ sig AnuncioApartamento extends Anuncio{}
 
 sig AnuncioRepublica extends Anuncio{}
 
-sig AnuncioMoradoPeloUsuario extends Anuncio{
-
-	avaliar : one Avaliar
-}
+sig AnuncioMoradoPeloUsuario extends Anuncio{}
 
 sig CadastrarAnuncio{}
 
@@ -106,7 +102,13 @@ sig Favoritar{}
 
 sig Avaliar{}
 
-sig ConsultarInformacoes{}
+sig ConsultarInformacoes{
+
+	preco : one Preco,
+	favorito : one Favoritar,
+	avaliar : one Avaliar,
+	localizacao : one Localizacao 
+}
 
 sig Filtro{
 	
@@ -174,6 +176,9 @@ fact mult{
 
 	--Cada preco esta associada a um anuncio 
 	all p : Preco | one p.~preco
+
+	--Cada botao de consultar informacoes esta associado a um anuncio
+	all c : ConsultarInformacoes | one c.~consulta
 }
 
 fact {
@@ -191,12 +196,12 @@ fact {
 	all u1,u2 : UsuarioCadastrado | u1 != u2 implies u1.meusAnuncios != u2.meusAnuncios
 
 	--Nao existe nenhum anuncio com a mesma localizacao 
-	all a1, a2 : Anuncio | a1 != a2 implies a1.localizacao != a2.localizacao 
+	all a1, a2 : Anuncio | a1 != a2 implies localizacaoDoAnuncio[a1] != localizacaoDoAnuncio[a2]
 }
 
 fact{
 	
-	--Todo anuncio craido por um usuario pertence a alguma aba anuncios que não seja a do proprio usuario
+	--Todo anuncio criado por um usuario pertence a alguma aba anuncios que não seja a do proprio usuario
 	all u : UsuarioLogado , m : MeusAnuncios, aba: Anuncios | abaAnunciosEmeusAnunciosSaoConjuntosDiferentes[aba,m,u]
 }
 
@@ -247,6 +252,11 @@ fun abaAnuncioDoUsuario[usuario: UsuarioLogado] : one Anuncios{
 fun anunciosDoUsuario[meusAnuncios : MeusAnuncios] : set Anuncio{
 
 	meusAnuncios.anuncios
+}
+
+fun localizacaoDoAnuncio[anuncio : Anuncio] one Localizacao{
+
+	anuncio.consulta.localizacao
 }
 
 pred show[]{}
