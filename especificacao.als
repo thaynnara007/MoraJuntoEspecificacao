@@ -16,7 +16,7 @@
 	(x) Como usuario logado, gostaria de poder favoritar anuncios.
 	(x) Como usuario logado, gostaria de poder avaliar anuncios cujo o imóvel eu ja fui morador.
 	(x) Como usuario, gostaria que cada anuncio tivesse um preco.
-	() Como usuario logado, gostaria de poder consultar informações dos anuncios
+	(x) Como usuario logado, gostaria de poder consultar informações dos anuncios
 
 */
 module moreJunto
@@ -106,7 +106,7 @@ sig ConsultarInformacoes{
 
 	preco : one Preco,
 	favorito : one Favoritar,
-	avaliar : one Avaliar,
+	avaliar : lone Avaliar,
 	localizacao : one Localizacao 
 }
 
@@ -210,6 +210,19 @@ fact usuarioLogadoNaoPodeLogarDeNovo{
 	all u : UsuarioLogado | #u.logar = 0 
 }
 
+fact {
+	
+	--Um usuario nao pode avaliar um anuncio o qual ele nao tenha morado
+	all a : AnuncioCriadoPeloUsuario | #avaliarDoAnuncio[a] = 0
+	
+	all a1 : AnuncioRepublica | #avaliarDoAnuncio[a1] = 0
+
+	all a2 : AnuncioApartamento | #avaliarDoAnuncio[a2] = 0
+	
+	--Um usuario pode avaliar um anuncio que ele tenha morado
+	all a3 : AnuncioMoradoPeloUsuario | #avaliarDoAnuncio[a3] = 1
+}
+
 --------------------------------------------
 ------------PREDICADOS--------------
 --------------------------------------------
@@ -254,9 +267,14 @@ fun anunciosDoUsuario[meusAnuncios : MeusAnuncios] : set Anuncio{
 	meusAnuncios.anuncios
 }
 
-fun localizacaoDoAnuncio[anuncio : Anuncio] one Localizacao{
+fun localizacaoDoAnuncio[anuncio : Anuncio] : one Localizacao{
 
 	anuncio.consulta.localizacao
+}
+
+fun avaliarDoAnuncio[anuncio : Anuncio] : one Avaliar{
+	
+	anuncio.consulta.avaliar
 }
 
 pred show[]{}
